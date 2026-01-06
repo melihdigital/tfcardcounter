@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Renk Döngüsü</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    #screen {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      user-select: none;
+      cursor: pointer;
+      transition: background-color 80ms linear;
+    }
+    .hint {
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(6px);
+      text-align: center;
+      color: #fff;
+      font-weight: 600;
+      line-height: 1.3;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+    }
+  </style>
+</head>
+<body>
+  <div id="screen" role="button" aria-label="Renk döngüsünü başlat / sıfırla">
+    <div class="hint">
+      Tıkla: Maviden başlat (0.5 sn aralıkla döner)<br/>
+      Mavi → Kırmızı → Sarı
+    </div>
+  </div>
+
+  <script>
+    const screen = document.getElementById("screen");
+
+    const colors = [
+      { name: "Mavi",   value: "#1E5BFF" },
+      { name: "Kırmızı", value: "#E53935" },
+      { name: "Sarı",   value: "#FBC02D" }
+    ];
+
+    let idx = 0;
+    let timer = null;
+
+    function applyColor(i) {
+      screen.style.backgroundColor = colors[i].value;
+      // Sarıda yazı okunurluğu için gölge yeterli; istersen burada metin rengini de değiştirebilirsin.
+    }
+
+    function startFromBlue() {
+      // Her tıklamada: varsa intervali temizle, maviden başlat, yeniden kur.
+      if (timer) clearInterval(timer);
+
+      idx = 0;            // 0 = Mavi
+      applyColor(idx);
+
+      timer = setInterval(() => {
+        idx = (idx + 1) % colors.length;
+        applyColor(idx);
+      }, 500);
+    }
+
+    // İlk açılışta nötr bir arka plan
+    screen.style.backgroundColor = "#222";
+
+    // Tıkla / dokun
+    screen.addEventListener("click", startFromBlue);
+    screen.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      startFromBlue();
+    }, { passive: false });
+
+    // Space/Enter ile de çalışsın (erişilebilirlik)
+    window.addEventListener("keydown", (e) => {
+      if (e.key === " " || e.key === "Enter") startFromBlue();
+    });
+  </script>
+</body>
+</html>
