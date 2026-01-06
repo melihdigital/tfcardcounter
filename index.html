@@ -16,7 +16,8 @@
       place-items: center;
       user-select: none;
       cursor: pointer;
-      transition: background-color 80ms linear;
+      /* ANINDA değişsin */
+      transition: background-color 0ms linear;
     }
     .hint {
       padding: 12px 16px;
@@ -34,7 +35,7 @@
 <body>
   <div id="screen" role="button" aria-label="Renk döngüsünü başlat / sıfırla">
     <div class="hint">
-      Tıkla: Maviden başlat (0.5 sn aralıkla döner)<br/>
+      Tıkla: Maviden başlat (0,515 sn aralıkla döner)<br/>
       Mavi → Kırmızı → Sarı
     </div>
   </div>
@@ -48,38 +49,35 @@
       { name: "Sarı",   value: "#FBC02D" }
     ];
 
+    const STEP_MS = 515; // 0,515 saniye
+
     let idx = 0;
     let timer = null;
 
     function applyColor(i) {
       screen.style.backgroundColor = colors[i].value;
-      // Sarıda yazı okunurluğu için gölge yeterli; istersen burada metin rengini de değiştirebilirsin.
     }
 
     function startFromBlue() {
-      // Her tıklamada: varsa intervali temizle, maviden başlat, yeniden kur.
       if (timer) clearInterval(timer);
 
-      idx = 0;            // 0 = Mavi
+      idx = 0;          // Mavi
       applyColor(idx);
 
       timer = setInterval(() => {
         idx = (idx + 1) % colors.length;
         applyColor(idx);
-      }, 500);
+      }, STEP_MS);
     }
 
-    // İlk açılışta nötr bir arka plan
     screen.style.backgroundColor = "#222";
 
-    // Tıkla / dokun
     screen.addEventListener("click", startFromBlue);
     screen.addEventListener("touchstart", (e) => {
       e.preventDefault();
       startFromBlue();
     }, { passive: false });
 
-    // Space/Enter ile de çalışsın (erişilebilirlik)
     window.addEventListener("keydown", (e) => {
       if (e.key === " " || e.key === "Enter") startFromBlue();
     });
